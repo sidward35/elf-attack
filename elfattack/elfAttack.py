@@ -34,7 +34,7 @@ YELLOW = (255, 255, 0)
 ## initialize pygame and create window
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Space Shooter")
+pygame.display.set_caption("Elf Attack")
 clock = pygame.time.Clock()     ## For syncing the FPS
 ###############################
 
@@ -99,15 +99,12 @@ def draw_shield_bar(surf, x, y, pct):
     pygame.draw.rect(surf, GREEN, fill_rect)
     pygame.draw.rect(surf, BLACK, outline_rect, 2)
 
-
 def draw_lives(surf, x, y, lives, img):
     for i in range(lives):
         img_rect= img.get_rect()
         img_rect.x = x + 30 * i
         img_rect.y = y
         surf.blit(img, img_rect)
-
-
 
 def newmob():
     mob_element = Mob()
@@ -137,7 +134,6 @@ class Explosion(pygame.sprite.Sprite):
                 self.image = explosion_anim[self.size][self.frame]
                 self.rect = self.image.get_rect()
                 self.rect.center = center
-
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -195,7 +191,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.x += self.speedx
 
     def shoot(self):
-        ## to tell the bullet where to spawn
+        ## to tell the arrow where to spawn
         now = pygame.time.get_ticks()
         if now - self.last_shot > self.shoot_delay:
             self.last_shot = now
@@ -211,17 +207,17 @@ class Player(pygame.sprite.Sprite):
                 bullets.add(bullet1)
                 bullets.add(bullet2)
 
-            """ MOAR POWAH """
+            """ MORE POWER """
             if self.power >= 3:
                 bullet1 = Bullet(self.rect.left, self.rect.centery)
                 bullet2 = Bullet(self.rect.right, self.rect.centery)
-                missile1 = Missile(self.rect.centerx, self.rect.top) # Missile shoots from center of ship
+                missile1 = Missile(self.rect.centerx, self.rect.top) # arrow shoots from center of ship
                 all_sprites.add(bullet1)
                 all_sprites.add(bullet2)
                 all_sprites.add(missile1)
                 bullets.add(bullet1)
                 bullets.add(bullet2)
-                bullets.add(missile1)\
+                bullets.add(missile1)
 
     def powerup(self):
         self.power += 1
@@ -284,7 +280,7 @@ class Pow(pygame.sprite.Sprite):
         self.image = powerup_images[self.type]
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        ## place the bullet according to the current position of the player
+        ## place the arrow according to the current position of the player
         self.rect.center = center
         self.speedy = 2
 
@@ -297,14 +293,14 @@ class Pow(pygame.sprite.Sprite):
 
 
 
-## defines the sprite for bullets
+## defines the sprite for arrows
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.image = bullet_img
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
-        ## place the bullet according to the current position of the player
+        ## place the arrow according to the current position of the player
         self.rect.bottom = y
         self.rect.centerx = x
         self.speedy = -10
@@ -320,7 +316,7 @@ class Bullet(pygame.sprite.Sprite):
         ## lets bind it to "spacebar".
         ## adding an event for it in Game loop
 
-## FIRE ZE MISSILES
+## FIRE THE MISSILES
 class Missile(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
@@ -341,25 +337,24 @@ class Missile(pygame.sprite.Sprite):
 ###################################################
 ## Load all game images
 
-background = pygame.image.load(path.join(img_dir, 'starfield.png')).convert()
+background = pygame.image.load(path.join(img_dir, 'background.png')).convert()
 background_rect = background.get_rect()
 ## ^^ draw this rect first
 
-player_img = pygame.image.load(path.join(img_dir, 'playerShip1_orange.png')).convert()
+player_img = pygame.image.load(path.join(img_dir, 'elf.png')).convert()
 player_mini_img = pygame.transform.scale(player_img, (25, 19))
 player_mini_img.set_colorkey(BLACK)
-bullet_img = pygame.image.load(path.join(img_dir, 'laserRed16.png')).convert()
-missile_img = pygame.image.load(path.join(img_dir, 'missile.png')).convert_alpha()
-# meteor_img = pygame.image.load(path.join(img_dir, 'meteorBrown_med1.png')).convert()
+bullet_img = pygame.image.load(path.join(img_dir, 'arrow.png')).convert()
+missile_img = pygame.image.load(path.join(img_dir, 'arrow2.png')).convert_alpha()
 meteor_images = []
 meteor_list = [
-    'meteorBrown_big1.png',
-    'meteorBrown_big2.png',
-    'meteorBrown_med1.png',
-    'meteorBrown_med3.png',
-    'meteorBrown_small1.png',
-    'meteorBrown_small2.png',
-    'meteorBrown_tiny1.png'
+    'dwarf1.png',
+    'dwarf2.png',
+    'goblin1.png',
+    'goblin2.png',
+    'smallGoblin1.png',
+    'smallGoblin2.png',
+    'tinyGoblin.png'
 ]
 
 for image in meteor_list:
@@ -418,7 +413,7 @@ while running:
             # mobs.add(mob_element)
             newmob()
 
-        ## group for bullets
+        ## group for arrows
         bullets = pygame.sprite.Group()
         powerups = pygame.sprite.Group()
 
@@ -445,13 +440,13 @@ while running:
     all_sprites.update()
 
 
-    ## check if a bullet hit a mob
-    ## now we have a group of bullets and a group of mob
+    ## check if an arrow hit a mob
+    ## now we have a group of arrows and a group of mob
     hits = pygame.sprite.groupcollide(mobs, bullets, True, True)
-    ## now as we delete the mob element when we hit one with a bullet, we need to respawn them again
+    ## now as we delete the mob element when we hit one with an arrow, we need to respawn them again
     ## as there will be no mob_elements left out
     for hit in hits:
-        score += 50 - hit.radius         ## give different scores for hitting big and small meteors
+        score += 50 - hit.radius         ## give different scores for hitting big and small enemies
         # m = Mob()
         # all_sprites.add(m)
         # mobs.add(m)
