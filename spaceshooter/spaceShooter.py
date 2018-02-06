@@ -153,7 +153,7 @@ class Player(pygame.sprite.Sprite):
         self.shield = 75
         self.shoot_delay = 250
         self.last_shot = pygame.time.get_ticks()
-        self.lives = 3
+        self.lives = 1
         self.hidden = False
         self.hide_timer = pygame.time.get_ticks()
         self.power = 1
@@ -266,7 +266,7 @@ class Mob(pygame.sprite.Sprite):
             self.rect.center = old_center
 
     def update(self):
-        self.rotate()
+        #self.rotate()
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         ## now what if the mob element goes out of the screen
