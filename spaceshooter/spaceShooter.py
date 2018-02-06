@@ -5,6 +5,7 @@
 from __future__ import division
 import pygame
 import random
+import time
 from os import path
 
 ## assets folder
@@ -16,7 +17,7 @@ WIDTH = 480
 HEIGHT = 600
 FPS = 60
 POWERUP_TIME = 5000
-BAR_LENGTH = 100
+BAR_LENGTH = 75
 BAR_HEIGHT = 10
 
 # Define Colors
@@ -60,16 +61,16 @@ def main_menu():
                 pygame.quit()
                 quit()
         else:
-            draw_text(screen, "Press [ENTER] To Begin", 30, WIDTH/2, HEIGHT/2)
-            draw_text(screen, "or [Q] To Quit", 30, WIDTH/2, (HEIGHT/2)+40)
+            draw_text_black(screen, "Press [ENTER] To Begin", 30, WIDTH/2, HEIGHT/2)
+            draw_text_black(screen, "or [Q] To Quit", 30, WIDTH/2, (HEIGHT/2)+40)
             pygame.display.update()
 
     screen.fill(BLACK)
-    draw_text(screen, "GET READY!", 40, WIDTH/2, HEIGHT/2)
+    draw_text_white(screen, "GET READY!", 40, WIDTH/2, HEIGHT/2)
     pygame.display.update()
 
 
-def draw_text(surf, text, size, x, y):
+def draw_text_white(surf, text, size, x, y):
     ## selecting a cross platform font to display the score
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, WHITE)       ## True denotes the font to be anti-aliased
@@ -77,19 +78,26 @@ def draw_text(surf, text, size, x, y):
     text_rect.midtop = (x, y)
     surf.blit(text_surface, text_rect)
 
+def draw_text_black(surf, text, size, x, y):
+    ## selecting a cross platform font to display the score
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, BLACK)       ## True denotes the font to be anti-aliased
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
 
 def draw_shield_bar(surf, x, y, pct):
     # if pct < 0:
     #     pct = 0
     pct = max(pct, 0)
     ## moving them to top
-    # BAR_LENGTH = 100
+    # BAR_LENGTH = 75
     # BAR_HEIGHT = 10
-    fill = (pct / 100) * BAR_LENGTH
+    fill = (pct / 75) * BAR_LENGTH
     outline_rect = pygame.Rect(x, y, BAR_LENGTH, BAR_HEIGHT)
     fill_rect = pygame.Rect(x, y, fill, BAR_HEIGHT)
     pygame.draw.rect(surf, GREEN, fill_rect)
-    pygame.draw.rect(surf, WHITE, outline_rect, 2)
+    pygame.draw.rect(surf, BLACK, outline_rect, 2)
 
 
 def draw_lives(surf, x, y, lives, img):
@@ -142,7 +150,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
         self.speedx = 0
-        self.shield = 100
+        self.shield = 75
         self.shoot_delay = 250
         self.last_shot = pygame.time.get_ticks()
         self.lives = 3
@@ -471,15 +479,15 @@ while running:
             # running = False     ## GAME OVER 3:D
             player.hide()
             player.lives -= 1
-            player.shield = 100
+            player.shield = 75
 
     ## if the player hit a power up
     hits = pygame.sprite.spritecollide(player, powerups, True)
     for hit in hits:
         if hit.type == 'shield':
             player.shield += random.randrange(10, 30)
-            if player.shield >= 100:
-                player.shield = 100
+            if player.shield >= 75:
+                player.shield = 75
         if hit.type == 'gun':
             player.powerup()
 
@@ -495,13 +503,21 @@ while running:
     screen.blit(background, background_rect)
 
     all_sprites.draw(screen)
-    draw_text(screen, str(score), 18, WIDTH / 2, 10)     ## 10px down from the screen
+    draw_text_black(screen, str(score), 36, WIDTH / 2, 10)     ## 10px down from the screen
     draw_shield_bar(screen, 5, 5, player.shield)
 
     # Draw lives
     draw_lives(screen, WIDTH - 100, 5, player.lives, player_mini_img)
 
+    pygame.display.update()
+
     ## Done after drawing everything to the screen
     pygame.display.flip()
+
+# Show score
+screen.fill(BLACK)
+draw_text_white(screen, "SCORE: "+str(score), 40, WIDTH/2, HEIGHT/2)
+pygame.display.update()
+time.sleep(3)
 
 pygame.quit()
